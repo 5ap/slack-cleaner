@@ -169,7 +169,7 @@ def delete_message_on_channel(channel_id, message):
     counter.increase()
 
 
-def remove_files(time_range, user_id=None, types=None):
+def remove_files(time_range, user_id=None, types=None, pattern=None):
     # Setup time range for query
     oldest = time_range.start_ts
     latest = time_range.end_ts
@@ -195,6 +195,13 @@ def remove_files(time_range, user_id=None, types=None):
         page = current_page + 1
 
         for f in files:
+
+            if pattern :
+                regex = re.compile( pattern )
+                match = regex.search( f['name'] )
+                if match == None:
+                    continue
+
             # Delete user file
             delete_file(f)
 
@@ -335,7 +342,7 @@ def file_cleaner():
     if args.types:
         _types = args.types
 
-    remove_files(time_range, _user_id, _types)
+    remove_files(time_range, _user_id, _types, args.pattern)
 
 
 def main():
