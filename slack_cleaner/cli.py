@@ -5,6 +5,7 @@ import logging
 import pprint
 import sys
 import time
+import re
 
 from slacker import Slacker
 
@@ -67,7 +68,7 @@ def get_id_by_name(list_dict, key_name):
             return d['id']
 
 
-def clean_channel(channel_id, time_range, user_id=None, bot=False):
+def clean_channel(channel_id, time_range, user_id=None, bot=False, pattern=None):
     # Setup time range for query
     oldest = time_range.start_ts
     latest = time_range.end_ts
@@ -104,6 +105,12 @@ def clean_channel(channel_id, time_range, user_id=None, bot=False):
 
             # Delete user messages
             if m['type'] == 'message':
+                if pattern :
+                    regex = re.compile( pattern )
+                    match = regex.search( m['text'] )
+                    if match == None:
+                        continue
+                    
                 # If it's a normal user message
                 if m.get('user'):
                     # Delete message if user_name matched or `--user=*`
@@ -249,7 +256,7 @@ def message_cleaner():
             sys.exit('User not found')
 
     # Delete messages on certain channel
-    clean_channel(_channel_id, time_range, _user_id, args.bot)
+    clean_channel(_channel_id, time_range, _user_id, args.bot, args.pattern)
 
 
 def file_cleaner():

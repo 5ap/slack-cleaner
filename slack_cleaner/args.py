@@ -45,6 +45,8 @@ class Args():
                        help='Delete messages newer than this time (YYYYMMDD)')
         p.add_argument('--before',
                        help='Delete messages older than this time (YYYYMMDD)')
+        p.add_argument('--pattern',
+                       help='Delete messages with specified pattern (regex)')
 
         # Perform or not
         p.add_argument('--perform', action='store_true',
@@ -70,5 +72,6 @@ class Args():
         self.bot = args.bot
         self.start_time = args.after
         self.end_time = args.before
+        self.pattern = args.pattern
 
         self.perform = args.perform
